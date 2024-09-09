@@ -12,9 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "USER")
-@Entity
-public class User extends BaseEntity {
+@MappedSuperclass
+public abstract class User extends BaseEntity {
 
     @Column(name = "FIRST_NAME", nullable = false)
     private String firstName;
@@ -22,13 +21,13 @@ public class User extends BaseEntity {
     @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
 
-    @Column(name = "PHONE_NUMBER", unique = true, nullable = false)
+    @Column(name = "PHONE_NUMBER", unique = true, nullable = false, length = 11)
     private String phoneNumber;
 
     @Column(name = "EMAIL", unique = true)
     private String email;
 
-    @Column(name = "NATIONAL_CODE", unique = true, nullable = false)
+    @Column(name = "NATIONAL_CODE", unique = true, nullable = false, length = 10)
     private String nationalCode;
 
     @Column(name = "GENDER", nullable = false)

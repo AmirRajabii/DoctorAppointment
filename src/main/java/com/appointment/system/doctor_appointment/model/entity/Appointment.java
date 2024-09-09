@@ -22,12 +22,15 @@ public class Appointment extends BaseEntity {
     @Column(name = "END_TIME" , nullable = false)
     private LocalDateTime endTime;
 
-    @Column(name = "IS_TAKEN" , nullable = false)
-    private boolean isTaken;
+    @Column(name = "PATIENT_FIRST_NAME")
+    private String patientFirstName;
+
+    @Column(name = "PATIENT_LAST_NAME")
+    private String patientLastName;
+
+    @Column(name = "PATIENT_PHONE_NUMBER", length = 11)
+    private String patientPhoneNumber;
 
     @ManyToOne
     private Doctor doctor;
-
-    @ManyToOne
-    private Patient patient;
 }

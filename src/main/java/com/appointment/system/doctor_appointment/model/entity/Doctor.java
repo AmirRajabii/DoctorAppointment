@@ -14,16 +14,12 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "DOCTOR")
 @Entity
-public class Doctor extends BaseEntity {
+public class Doctor extends User {
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
-
-    @OneToMany(mappedBy = "patient")
+    @OneToMany(mappedBy = "doctor")
     private List<Appointment> appointments;
 
-    // It could have been an enum, but it's not necessary in the test project right now
+    // It could have been an enum or table, but it's not necessary in the test project right now
     @Column(name = "SPECIALTY", nullable = false)
     private String specialty;
 
