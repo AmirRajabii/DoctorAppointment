@@ -15,7 +15,7 @@ public class DataLoader implements CommandLineRunner {
     private DoctorRepository doctorRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args){
         if (doctorRepository.count() == 0) {
             Doctor doctor = new Doctor();
             doctor.setFirstName("Amir");
