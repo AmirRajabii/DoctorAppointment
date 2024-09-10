@@ -20,7 +20,7 @@ public class TimeSplitter {
         if (!startDateTime.toLocalDate().equals(endDateTime.toLocalDate())) {
             throw new DateMismatchException("Error: Start and end date-times are not on the same day.");
         }
-        while (currentStart.plusMinutes(intervalMinute).isBefore(endDateTime) || currentStart.plusMinutes(intervalMinute).isEqual(endDateTime)) {
+        while (!currentStart.plusMinutes(intervalMinute).isAfter(endDateTime)) {
             LocalDateTime currentEnd = currentStart.plusMinutes(intervalMinute);
             intervals.add(new TimeRange(currentStart, currentEnd));
             currentStart = currentEnd;

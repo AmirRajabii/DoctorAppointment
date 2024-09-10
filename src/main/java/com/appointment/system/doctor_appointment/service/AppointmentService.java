@@ -2,6 +2,7 @@ package com.appointment.system.doctor_appointment.service;
 
 import com.appointment.system.doctor_appointment.model.entity.Appointment;
 import com.appointment.system.doctor_appointment.repository.AppointmentRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +22,11 @@ public class AppointmentService {
     }
 
     public List<Appointment> findAppointmentsByDoctorId(long id) {
-        return appointmentRepository.findAppointmentsByDoctorId(id);
+        return appointmentRepository.findByDoctorId(id, Sort.by(Sort.Direction.ASC, "startTime"));
     }
 
     public List<Appointment> findOpenAppointmentsByDoctorId(long id) {
-        return appointmentRepository.findOpenAppointmentsByDoctorId(id);
+        return appointmentRepository.findByDoctorIdAndPatientPhoneNumberIsNull(id, Sort.by(Sort.Direction.ASC, "startTime"));
     }
 
     public Optional<Appointment> findById(long id) {
@@ -37,6 +38,6 @@ public class AppointmentService {
     }
 
     public List<Appointment> findTakenAppointmentsByPhoneNumber(String PhoneNumber) {
-        return appointmentRepository.findTakenAppointmentsByPhoneNumber(PhoneNumber);
+        return appointmentRepository.findByPatientPhoneNumber(PhoneNumber, Sort.by(Sort.Direction.ASC, "startTime"));
     }
 }

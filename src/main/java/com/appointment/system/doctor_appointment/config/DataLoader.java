@@ -4,18 +4,20 @@ import com.appointment.system.doctor_appointment.model.entity.Doctor;
 import com.appointment.system.doctor_appointment.model.enums.Gender;
 import com.appointment.system.doctor_appointment.model.enums.UserRole;
 import com.appointment.system.doctor_appointment.repository.DoctorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    @Autowired
-    private DoctorRepository doctorRepository;
+    private final DoctorRepository doctorRepository;
+
+    public DataLoader(DoctorRepository doctorRepository) {
+        this.doctorRepository = doctorRepository;
+    }
 
     @Override
-    public void run(String... args){
+    public void run(String... args) {
         if (doctorRepository.count() == 0) {
             Doctor doctor = new Doctor();
             doctor.setFirstName("Amir");
