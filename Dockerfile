@@ -23,22 +23,22 @@ ENV MAVEN_CONFIG="$USER_HOME_DIR/.m2"
 ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
 
 ############# one of this #############
-#WORKDIR /application
-#
-#COPY . .
-#
-## Run Maven clean install during build
-#RUN mvn clean install
-#
-## Set the default command to run the app
-#CMD ["java", "-jar", "target/doctor-appointment-0.0.1-SNAPSHOT.jar"]
-############# one of this #############
 WORKDIR /application
 
-COPY target/doctor-appointment-0.0.1-SNAPSHOT.jar .
+COPY . .
 
 # Run Maven clean install during build
-#RUN mvn clean install
+RUN mvn clean install
 
 # Set the default command to run the app
-CMD ["java", "-jar", "doctor-appointment-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/doctor-appointment-0.0.1-SNAPSHOT.jar"]
+############# one of this #############
+#WORKDIR /application
+#
+#COPY target/doctor-appointment-0.0.1-SNAPSHOT.jar .
+#
+## Run Maven clean install during build
+##RUN mvn clean install
+#
+## Set the default command to run the app
+#CMD ["java", "-jar", "doctor-appointment-0.0.1-SNAPSHOT.jar"]
