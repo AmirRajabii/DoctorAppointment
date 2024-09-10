@@ -16,4 +16,10 @@ public class AppointmentConvertor {
         );
     }
 
+    public static void setDataForUpdate(String phoneNumber, String firstName, String lastName, Appointment appointment) {
+        appointment.setPatientFirstName(firstName);
+        appointment.setPatientLastName(lastName);
+        appointment.setPatientPhoneNumber(phoneNumber);
+    }
+
 }

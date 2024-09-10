@@ -61,7 +61,6 @@ public class AppointmentController {
 
     @GetMapping("/get-appointment-list")
     public ResponseEntity<?> getAppointmentList(@RequestParam("doctorId") @NotNull Long doctorId) {
-
         Optional<Doctor> doctor = doctorService.findById(doctorId);
         if (doctor.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("Doctor with ID %d not found", doctorId));
@@ -73,7 +72,6 @@ public class AppointmentController {
 
     @GetMapping("/get-open-appointment-list")
     public ResponseEntity<?> getOpenAppointmentList(@RequestParam("doctorId") @NotNull Long doctorId) {
-
         Optional<Doctor> doctor = doctorService.findById(doctorId);
         if (doctor.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("Doctor with ID %d not found", doctorId));
@@ -86,31 +84,38 @@ public class AppointmentController {
 
     @DeleteMapping("/delete-appointment")
     public ResponseEntity<String> deleteAppointment(@RequestParam("appointmentId") @NotNull Long appointmentId) {
-
-        Optional<Appointment> appointment = appointmentService.findById(appointmentId);
-        if (appointment.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("Appointment with ID %d not found", appointmentId));
-        if (appointment.get().getPatientPhoneNumber() != null)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("This Appointment Has Been Taken By a Patient");
-        appointmentService.delete(appointment.get());
-        return ResponseEntity.ok("Appointment Successfully Deleted");
+        return appointmentService.findById(appointmentId)
+                .map(appointment -> {
+                    if (appointment.getPatientPhoneNumber() != null) {
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                                .body("This Appointment Has Been Taken By a Patient");
+                    }
+                    appointmentService.delete(appointment);
+                    return ResponseEntity.ok("Appointment Successfully Deleted");
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(String.format("Appointment with ID %d not found", appointmentId)));
     }
 
     @PostMapping("/take-appointment")
-    public ResponseEntity<?> takeAppointment(@RequestParam("appointmentId") @NotNull Long appointmentId,
-                                             @RequestParam("phoneNumber") @NotNull @Pattern(regexp = "^\\d{11}$") String phoneNumber,
-                                             @RequestParam("firstName") @NotNull @Size(min = 3, max = 50) String firstName,
-                                             @RequestParam("lastName") @NotNull @Size(min = 3, max = 50) String lastName) {
+    public ResponseEntity<?> takeAppointment(
+            @RequestParam("appointmentId") @NotNull Long appointmentId,
+            @RequestParam("phoneNumber") @NotNull @Pattern(regexp = "^\\d{11}$") String phoneNumber,
+            @RequestParam("firstName") @NotNull @Size(min = 3, max = 50) String firstName,
+            @RequestParam("lastName") @NotNull @Size(min = 3, max = 50) String lastName) {
 
-        Optional<Appointment> appointment = appointmentService.findById(appointmentId);
-        if (appointment.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("Appointment with ID %d not found", appointmentId));
-        if (appointment.get().getPatientPhoneNumber() != null)
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("This Appointment Has Been Taken By a Patient");
-        appointment.get().setPatientFirstName(firstName);
-        appointment.get().setPatientLastName(lastName);
-        appointment.get().setPatientPhoneNumber(phoneNumber);
-        return ResponseEntity.status(HttpStatus.CREATED).body(AppointmentConvertor.appointmentToAppointmentDTO(appointmentService.save(appointment.get())));
+        return appointmentService.findById(appointmentId)
+                .map(appointment -> {
+                    if (appointment.getPatientPhoneNumber() != null) {
+                        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                                .body("This Appointment Has Been Taken By a Patient");
+                    }
+                    AppointmentConvertor.setDataForUpdate(phoneNumber, firstName, lastName, appointment);
+                    return ResponseEntity.status(HttpStatus.CREATED)
+                            .body(AppointmentConvertor.appointmentToAppointmentDTO(appointmentService.save(appointment)));
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(String.format("Appointment with ID %d not found", appointmentId)));
     }
 
     @GetMapping("/get-taken-appointment-list")
