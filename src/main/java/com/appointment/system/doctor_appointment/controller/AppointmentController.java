@@ -8,6 +8,7 @@ import com.appointment.system.doctor_appointment.model.entity.Doctor;
 import com.appointment.system.doctor_appointment.service.AppointmentService;
 import com.appointment.system.doctor_appointment.service.DoctorService;
 import com.appointment.system.doctor_appointment.utils.TimeSplitter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,8 @@ import java.util.Optional;
 
 @Validated
 @RestController
-@RequestMapping("/api/appointment")
+@RequestMapping("/api/v1/appointment")
+@Tag(name = "Appointment", description = "Operations related to appointments")
 public class AppointmentController {
 
     @Autowired
@@ -59,7 +61,7 @@ public class AppointmentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(appointmentDtos);
     }
 
-    @GetMapping("/get-appointment-list")
+    @GetMapping("/")
     public ResponseEntity<?> getAppointmentList(@RequestParam("doctorId") @NotNull Long doctorId) {
         Optional<Doctor> doctor = doctorService.findById(doctorId);
         if (doctor.isEmpty())
@@ -70,7 +72,7 @@ public class AppointmentController {
         );
     }
 
-    @GetMapping("/get-open-appointment-list")
+    @GetMapping("/open-appointments")
     public ResponseEntity<?> getOpenAppointmentList(@RequestParam("doctorId") @NotNull Long doctorId) {
         Optional<Doctor> doctor = doctorService.findById(doctorId);
         if (doctor.isEmpty())
@@ -82,7 +84,7 @@ public class AppointmentController {
         );
     }
 
-    @DeleteMapping("/delete-appointment")
+    @DeleteMapping("/")
     public ResponseEntity<String> deleteAppointment(@RequestParam("appointmentId") @NotNull Long appointmentId) {
         return appointmentService.findById(appointmentId)
                 .map(appointment -> {
@@ -118,7 +120,7 @@ public class AppointmentController {
                         .body(String.format("Appointment with ID %d not found", appointmentId)));
     }
 
-    @GetMapping("/get-taken-appointment-list")
+    @GetMapping("/taken-appointments")
     public ResponseEntity<?> getAppointmentList(@RequestParam("phoneNumber") @NotNull @Pattern(regexp = "^\\d{11}$") String phoneNumber) {
 
         List<Appointment> appointments = appointmentService.findTakenAppointmentsByPhoneNumber(phoneNumber);
